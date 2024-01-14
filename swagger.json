@@ -1,0 +1,239 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Moja Aplikacja API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/products": {
+      "post": {
+        "summary": "Dodaj nowy produkt",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dane nowego produktu",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Identyfikator produktu"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Nazwa produktu (unikalna)"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "Cena produktu"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Opis produktu"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Ilość dostępnych sztuk"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Jednostka miary (np. sztuki, kg, litry)"
+                }
+              },
+              "required": ["id", "name", "price", "description", "quantity", "unit"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Pomyślnie dodano nowy produkt"
+          },
+          "400": {
+            "description": "Nieprawidłowe żądanie, brak wymaganych pól lub nazwa produktu nieunikalna"
+          },
+          "500": {
+            "description": "Błąd serwera"
+          }
+        }
+      },
+      "get": {
+        "summary": "Pobierz produkty z możliwością filtrowania",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "type": "string",
+            "description": "Filtruj produkty po nazwie"
+          },
+          {
+            "in": "query",
+            "name": "minPrice",
+            "type": "number",
+            "description": "Filtruj produkty po cenie min"
+          },
+          {
+            "in": "query",
+            "name": "maxPrice",
+            "type": "number",
+            "description": "Filtruj produkty po cenie max"
+          },
+          {
+            "in": "query",
+            "name": "minQuantity",
+            "type": "integer",
+            "description": "Filtruj produkty po minimalnej ilości"
+          },
+          {
+            "in": "query",
+            "name": "maxQuantity",
+            "type": "integer",
+            "description": "Filtruj produkty po max ilości"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pomyślnie pobrano produkty",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "price": { "type": "number" },
+                  "description": { "type": "string" },
+                  "quantity": { "type": "integer" },
+                  "unit": { "type": "string" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Błąd serwera"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "put": {
+        "summary": "Edytuj istniejący produkt",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "Identyfikator produktu do edycji",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dane produktu do edycji",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Nowa nazwa produktu"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "Nowa cena produktu"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Nowy opis produktu"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Nowa ilość dostępnych sztuk"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Nowa jednostka miary (np. sztuki, kg, litry)"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pomyślnie zaktualizowano produkt"
+          },
+          "400": {
+            "description": "Nieprawidłowe żądanie, brak wymaganych pól"
+          },
+          "404": {
+            "description": "Produkt o podanym identyfikatorze nie istnieje"
+          },
+          "500": {
+            "description": "Błąd serwera"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Usuń istniejący produkt",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "Identyfikator produktu do usunięcia",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pomyślnie usunięto produkt"
+          },
+          "404": {
+            "description": "Produkt o podanym identyfikatorze nie istnieje"
+          },
+          "500": {
+            "description": "Błąd serwera"
+          }
+        }
+      }
+    },
+    "/inventory-report": {
+      "get": {
+        "summary": "Generuj raport stanu magazynu",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Pomyślnie wygenerowano raport",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "totalValue": { "type": "number" },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" },
+                      "quantity": { "type": "integer" },
+                      "value": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Błąd serwera"
+          }
+        }
+      }
+    }
+  }
+}
